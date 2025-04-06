@@ -12,7 +12,7 @@ import Tester from './Tester.js';
     await LoginPage.test()
 
     console.log("Test ended")
-    await test.end()
+    //await test.end()
 })();
 
 

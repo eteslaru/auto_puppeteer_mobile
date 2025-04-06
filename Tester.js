@@ -27,7 +27,7 @@ class Tester {
     }
 
     async end() {
-        console.log(`Test finished: ${this.testName}`);
+        console.log(`Test passed: ${this.testName}`);
         this.logMessageWithCurrentTime('Test finished');
 
         const logData = JSON.stringify(this.logs, null, 2);
@@ -37,3 +37,4 @@ class Tester {
 }
 
 export default Tester;
+

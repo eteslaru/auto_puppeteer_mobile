@@ -1,5 +1,4 @@
 import puppeteer from 'puppeteer';
-import { timeout } from 'puppeteer';
 
 class BasePage {
     static browser = null;
@@ -18,9 +17,10 @@ class BasePage {
         if (!BasePage.page) {
             console.log("Creating a new page");
             BasePage.page = await BasePage.browser.newPage();
-            BasePage.page.setViewport({width: 1920, height: 1080});
+            await BasePage.page.setViewport({width: 1920, height: 1080});
         }
         console.log('Base page este.....',BasePage.page)
+        return BasePage.page;
     }
 
     static async navigate(url = BasePage.baseUrl) {
@@ -58,21 +58,15 @@ class BasePage {
             if(elementType === 'xpath'){
                 let xpathPrefix = '::-p-xpath'
                 try{
-                    //tre sa il bag intr-un element 
                     await BasePage.page.waitForSelector(`${xpathPrefix}(${element_str})`);
                 }
                 catch{
                     console.log('Element not found in page ', element_str)
-                }
-                    await BasePage.page.click('xpath/' + xpathExpression)
-                // let el = await BasePage.page.$(`${xpathPrefix}(${element_str})`);
-                // console.log('Element el is... ',el)
-                // if (el.length > 0) {
-                //     await el[0].click();
-                //     console.log('Element clicked ',element_str)
-                // } else {
-                //     throw new Error("XPath element not found.");
-                // }
+                }   
+                await BasePage.page.evaluate(element => {
+                    let el = document.evaluate(element, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                    if (el) el.click();
+                }, element_str);
             }
             
             else{
@@ -85,23 +79,21 @@ class BasePage {
         }
     }
 
-    static async inputText(element_str, text, ){
+    static async inputText(element_str, text ){
         try {
             console.log('Waiting for input element to be displayed:', element_str);
-            await BasePage.page.waitForTimeout(2000);
-            await BasePage.page.type(element_str, text)
+            await BasePage.page.setDefaultTimeout(2000);
+            await BasePage.page.type(element_str, text, { delay: 100 });
             return true;
         } catch (error) {
-            console.error(`Input Element ${element_str} not displayed`);
+            console.error(error);
             return false;
         } 
     }
 
     static async waitUntilElementIsDisplayed(element_str, timeout = 5000) {
         try {
-            console.log('Waiting for  element to be displayed:', element_str);
-            console.log('Elementul este', element_str)
-            await BasePage.page.waitForSelector('body > header > div.header-navbar > div.header-corporate > p',timeout);
+            await BasePage.page.waitForSelector(element_str ,timeout);
             return true;
         } catch (error) {
             console.error(`Element ${element_str} not displayed`);
