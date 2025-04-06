@@ -21,9 +21,6 @@ class Tester {
     async start() {
         console.log(`Starting test: ${this.testName}`);
         this.logMessageWithCurrentTime('Test started');
-
-        await BasePage.init();
-        await BasePage.navigate(); 
     }
 
     async end() {

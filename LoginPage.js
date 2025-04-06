@@ -15,16 +15,17 @@ class LoginPage extends BasePage {
 
     static async login() {
         console.log("Starting login");
-        await this.inputText(LoginPage.passwordInputElement, LoginPage.password);
-        await this.inputText(LoginPage.usernameInputElement, LoginPage.username);
-       // await this.clickElement(LoginPage.loginButton);
+        await LoginPage.writeText(LoginPage.passwordInputElement, LoginPage.password);
+        await LoginPage.writeText(LoginPage.usernameInputElement, LoginPage.username);
+        await LoginPage.clickElement(LoginPage.loginButton);
         console.log("Login success");
     }
 
     static async test(){
         try {
-            LoginPage.init()
             console.log("Test started");
+            await LoginPage.navigate(); 
+
             await LoginPage.clickElement("//button[contains(@class, 'mde-consent-accept-btn')]")
             await LoginPage.clickElement("//a[@data-google-interstitial='false' and contains(@class, 'header-login-button') and contains(@href, 'login.mobile.de')]")
             await LoginPage.login()     

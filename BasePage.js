@@ -18,6 +18,7 @@ class BasePage {
             console.log("Creating a new page");
             BasePage.page = await BasePage.browser.newPage();
             await BasePage.page.setViewport({width: 1920, height: 1080});
+            await BasePage.page.setUserAgent('Chrome')
         }
         console.log('Base page este.....',BasePage.page)
         return BasePage.page;
@@ -79,10 +80,10 @@ class BasePage {
         }
     }
 
-    static async inputText(element_str, text ){
+    static async writeText(element_str, text ){
         try {
             console.log('Waiting for input element to be displayed:', element_str);
-            await BasePage.page.setDefaultTimeout(2000);
+            await BasePage.page.waitForSelector(element_str)
             await BasePage.page.type(element_str, text, { delay: 100 });
             return true;
         } catch (error) {
