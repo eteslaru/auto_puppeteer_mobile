@@ -37,8 +37,7 @@ class LoginPage extends BasePage {
             LoginPage.unlockBrowser()
         }
 
-        //await LoginPage.closeBrowser()
-       // await test.end()
+        await LoginPage.closeBrowser()
     }
 }
 

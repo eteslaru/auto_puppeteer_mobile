@@ -1,4 +1,3 @@
-import BasePage from './BasePage.js';
 import fs from 'fs';
 
 class Tester {

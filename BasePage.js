@@ -26,7 +26,7 @@ class BasePage {
         console.log('Base page este.....',BasePage.page)
         return BasePage.page;
     }
-
+    //function to print salut
     static async navigate(url = BasePage.baseUrl) {
         await BasePage.init();
         if (!BasePage.page) {
