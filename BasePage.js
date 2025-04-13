@@ -1,4 +1,7 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+
+puppeteer.use(StealthPlugin());
 
 class BasePage {
     static browser = null;
@@ -17,8 +20,8 @@ class BasePage {
         if (!BasePage.page) {
             console.log("Creating a new page");
             BasePage.page = await BasePage.browser.newPage();
-            await BasePage.page.setViewport({width: 1920, height: 1080});
-            await BasePage.page.setUserAgent('Chrome')
+            await BasePage.page.setViewport({width: 1920, height: 800});
+            await BasePage.page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36')
         }
         console.log('Base page este.....',BasePage.page)
         return BasePage.page;
