@@ -34,7 +34,7 @@ class LoginPage extends BasePage {
             LoginPage.unlockBrowser()
         }
 
-        await LoginPage.closeBrowser()
+        //await LoginPage.closeBrowser()
     }
 }
 

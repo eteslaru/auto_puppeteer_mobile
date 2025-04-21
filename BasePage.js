@@ -100,9 +100,9 @@ class BasePage {
 
     static async waitUntilElementIsDisplayed(element_str, expected_text, timeout = 5000) {
         try {
-            await BasePage.page.on('console', msg =>
-                console.log('[browserLog:]', msg.text())
-              );
+            // await BasePage.page.on('console', msg =>
+            //     console.log('[browserLog:]', msg.text())
+            //   );
            const textInElement= await BasePage.page.evaluate(element => {
                 let el = document.evaluate(element, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                 let text;
