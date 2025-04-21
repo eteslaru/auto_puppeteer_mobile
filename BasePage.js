@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { expect } from 'chai';
 
 puppeteer.use(StealthPlugin());
 
@@ -8,6 +9,7 @@ class BasePage {
     static page = null;
     static baseUrl = 'https://www.mobile.de/ro';
     static isLocked = true;
+    static deAcordBtn = "//button[contains(@class, 'mde-consent-accept-btn')]"
 
     //  Inițializează browserul și pagina (Singleton)
     static async init() {
@@ -35,6 +37,7 @@ class BasePage {
         }
         console.log(`Navigating to ${url}`);
         await BasePage.page.goto(url);
+        await BasePage.clickElement(BasePage.deAcordBtn);
     }
 
     static unlockBrowser() {
@@ -95,15 +98,26 @@ class BasePage {
         } 
     }
 
-    static async waitUntilElementIsDisplayed(element_str, timeout = 5000) {
+    static async waitUntilElementIsDisplayed(element_str, expected_text, timeout = 5000) {
         try {
-            await BasePage.page.waitForSelector(element_str ,timeout);
-            return true;
+           const textInElement= await BasePage.page.evaluate(element => {
+                console.log('textxxxxxxxxxxxxxxxxxx')
+                let el = document.evaluate(element, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                if (el){
+                    let text = el.textContent;
+                    console.log('TEXTUl ESTE',text);  
+                }
+                return text
+            }, element_str);
+            expect(textInElement).to.equal(expected_text)
+            
+            
         } catch (error) {
-            console.error(`Element ${element_str} not displayed`);
+            console.error(error);
             return false;
         } 
     }
+
 
 }
 

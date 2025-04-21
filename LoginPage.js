@@ -1,5 +1,4 @@
 import BasePage from './BasePage.js';
-import Tester from './Tester.js';
 
 class LoginPage extends BasePage {
     static username = "e.teslaru@gmail.com"; 
@@ -25,8 +24,6 @@ class LoginPage extends BasePage {
         try {
             console.log("Test started");
             await LoginPage.navigate(); 
-
-            await LoginPage.clickElement("//button[contains(@class, 'mde-consent-accept-btn')]")
             await LoginPage.clickElement("//a[@data-google-interstitial='false' and contains(@class, 'header-login-button') and contains(@href, 'login.mobile.de')]")
             await LoginPage.login()     
         } 
