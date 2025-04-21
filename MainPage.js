@@ -35,7 +35,7 @@ class MainPage extends BasePage {
             MainPage.unlockBrowser()
         }
 
-        //await MainPage.closeBrowser()
+        await MainPage.closeBrowser()
     }
 }
 

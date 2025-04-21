@@ -98,6 +98,14 @@ class BasePage {
         } 
     }
 
+    static async selectOption(listElement,value){
+        try{
+            await BasePage.page.select(listElement, value)
+        } catch (error) {
+        console.error(error);
+        }
+    }
+
     static async waitUntilElementIsDisplayed(element_str, expected_text, timeout = 5000) {
         try {
             // await BasePage.page.on('console', msg =>
@@ -105,7 +113,7 @@ class BasePage {
             //   );
            const textInElement= await BasePage.page.evaluate(element => {
                 let el = document.evaluate(element, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                let text;
+                let text
                 if (el){
                     text = el.textContent; 
                 }
