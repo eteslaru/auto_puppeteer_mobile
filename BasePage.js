@@ -125,8 +125,7 @@ class BasePage {
             return false;
         } 
     }
-
-
+    
 }
 
 export default BasePage;

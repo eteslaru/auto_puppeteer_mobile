@@ -5,15 +5,16 @@ import { expect } from 'chai';
 class ResultsPage extends BasePage {
     static cautareDetaliataBtn = '//a[contains(@class,"js-adjustable-dsp-link") and normalize-space()="Căutare detaliată"]';
     static resultPageElement = `//h3[normalize-space(.)='Căutare detaliată: Automobile – noi sau second-hand']`;
+    static totalResultsElement = `//div/@data-result-count`;
     static afisareRezultateBtn = `//input[contains(@class, 'js-show-results')]`;
     static afisare50RezultateBtn = `//a[contains(@class, 'pagination-number') and text()='50']`;
     static resultElements = `//div[@class='g-row js-ad-entry']`;
     static resultPageExpText = 'Căutare detaliată: Automobile – noi sau second-hand';
     static carListElement = 'select#makeModelVariant1Make';
+    static resulstListElement = 'div.g-row.js-ad-entry';
     static inputMinHpElement = '#minPower';
     static hpValue = '400';
     static McLarenOption = '137';
-    static regexModel = /alt="McLaren\s([A-Za-z0-9\s&;]+)/;
 
 
         
@@ -22,30 +23,67 @@ class ResultsPage extends BasePage {
     }
 
     static async extractDetailsOfEachResultFromPage() {
-        await ResultsPage.page.waitForSelector('div.g-row.js-ad-entry');
-    
+        await ResultsPage.page.waitForSelector(ResultsPage.resulstListElement);
         const resultsList = await ResultsPage.page.$$eval(
-            'div.g-row.js-ad-entry', divs => divs.map(div => div.textContent.trim()));
-    
+            ResultsPage.resulstListElement, divs => divs.map(div => div.textContent.trim()));
+            
         if (!Array.isArray(resultsList)) {
             throw new Error('Rezultatul nu este un array!');
         }
-    
-        const results = resultsList.map(entry => {
-            const modelMatch = entry.match(/McLaren ([\w\s\/\-\&\+°]+?)(?=\d{2}\/\d{4}|[A-Z])/); // model 
-            const yearMatch = entry.match(/(\d{2})\/(\d{4})/); // luna/anul
+        console.log("Lista este ......",resultsList)
+        const pageResults = resultsList.map(entry => {
+            const modelMatch = entry.match(/alt="(\w+\s\w+)/); // model 
+            const yearMatch = entry.match(/>.*?(\d{2}\/\d{4})/); // luna/anul
             const hpMatch = entry.match(/\((\d+)\s*CP\)/); // cai putere
     
             return {
                 model: modelMatch ? modelMatch[1].trim() : null,
-                year: yearMatch ? yearMatch[2] : null,
+                year: yearMatch ? yearMatch[1] : null,
                 horsepower: hpMatch ? parseInt(hpMatch[1], 10) : null
             };
         });
-    
-        console.log(results);
+        console.log(pageResults);
+        return pageResults
     }
 
+    static async clickNextPageIfExists() {
+        const nextPageSelector = 'a.pagination-nav.pagination-nav-right';
+        const nextPageExists = await ResultsPage.page.$(nextPageSelector);
+    
+        if (nextPageExists) {
+            console.log('Butonul de pagină următoare a fost găsit. Se face click...');
+            await Promise.all([
+                ResultsPage.page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+                ResultsPage.page.click(nextPageSelector)
+            ]);
+            return true
+        } else {
+            console.log('Nu există buton de pagină următoare.');
+            return false
+        }
+    }
+
+    static async extractAllResultsFromAllPages() {
+        let allResults = [];
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            const results = await ResultsPage.extractDetailsOfEachResultFromPage();
+            allResults.push(...results);
+            hasNextPage = await ResultsPage.clickNextPageIfExists();
+        }
+        console.log('Toate rezultatele extrase:', allResults);
+        return allResults.length;
+    }
+
+    static async getResultCount() {
+        await ResultsPage.page.evaluate(element => {
+            let el = document.evaluate(element, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (el) el.click();
+        })
+        return resultCount;
+    }
+    
 
     static async testCarFilterByHp(){
         try {
@@ -58,10 +96,11 @@ class ResultsPage extends BasePage {
             await ResultsPage.selectOption(ResultsPage.carListElement,ResultsPage.McLarenOption)
             await ResultsPage.clickElement(ResultsPage.afisareRezultateBtn)
             await ResultsPage.clickElement(ResultsPage.afisare50RezultateBtn)
-            await ResultsPage.extractDetailsOfEachResultFromPage()
-            // await MainPage.clickElement(MainPage.spanishBtn)
-            // await MainPage.clickElement(MainPage.deAcordBtn)
-               
+            let actualFilteredResults = await ResultsPage.extractAllResultsFromAllPages()
+            let expectedResults = await ResultsPage.getResultCount()
+            expect(actualFilteredResults).equal(expectedResults);
+            //expected result -> get atribute from element - 
+            //compare cu actual result > count de cate rezultate am .
         } 
         catch (error) {
             console.error(`Test failed: ${error.message}`);
