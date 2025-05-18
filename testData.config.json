@@ -1,0 +1,19 @@
+{
+  "test_carFilterByHp": {
+    "values": {
+      "hpValue": "400",
+      "McLarenOption": "137"
+    }
+  },
+  "test_language": {
+    "values": {
+      "spanishBtn": "//li[contains(@class,'header-meta-action-dropdown-item') and .//span[normalize-space()='Español']]//a"
+    }
+  },
+  "test_login": {
+    "values": {
+      "username": "e.teslaru@gmail.com",
+      "password": "@Utomation123"
+    }
+  }
+}

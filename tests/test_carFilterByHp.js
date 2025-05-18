@@ -1,5 +1,5 @@
-import MainPage from './MainPage.js';
-import Tester from './Tester.js';
+import ResultsPage from '../pages/ResultsPage.js';
+import Tester from '../pages/Tester.js';
 
 (async () => {
     const test = new Tester("Login Test");
@@ -7,7 +7,7 @@ import Tester from './Tester.js';
     await test.start();
     console.log("Test started");
 
-    await MainPage.testChangeLanguage()
+    await ResultsPage.testCarFilterByHp()
 
     console.log("Test ended")
     await test.end()

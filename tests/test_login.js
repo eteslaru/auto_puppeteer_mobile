@@ -1,6 +1,6 @@
 
-import LoginPage from './LoginPage.js';
-import Tester from './Tester.js';
+import LoginPage from '../pages/LoginPage.js';
+import Tester from '../pages/Tester.js';
 
 (async () => {
     const test = new Tester("Login Test");

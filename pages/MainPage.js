@@ -1,5 +1,6 @@
 import BasePage from './BasePage.js';
 import { expect } from 'chai';
+import config from '../testData.config.json' assert { type: 'json' };
 
 
 class MainPage extends BasePage {
@@ -9,7 +10,7 @@ class MainPage extends BasePage {
     static expectedTextSp = "Coches importados desde Alemania y toda Europa"
     static expectedUrl = "//www.mobile.de/es"
     static languageBtn = "//li[contains(@class,'header-meta-item-language-selector')]/span[contains(@class,'header-meta-action-toggle')]"
-    static spanishBtn = "//li[contains(@class,'header-meta-action-dropdown-item') and .//span[normalize-space()='Español']]//a"
+    static spanishBtn = config.test_language.values.spanishBtn
     
     
     constructor() {

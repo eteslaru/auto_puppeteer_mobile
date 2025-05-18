@@ -1,6 +1,6 @@
 import BasePage from './BasePage.js';
 import { expect } from 'chai';
-
+import config from '../testData.config.json' assert { type: 'json' };
 
 class ResultsPage extends BasePage {
     static cautareDetaliataBtn = '//a[contains(@class,"js-adjustable-dsp-link") and normalize-space()="Căutare detaliată"]';
@@ -14,9 +14,8 @@ class ResultsPage extends BasePage {
     static carListElement = 'select#makeModelVariant1Make';
     static resulstListElement = 'div.g-row.js-ad-entry';
     static inputMinHpElement = '#minPower';
-    static hpValue = '400';
-    static McLarenOption = '137';
-
+    static hpValue = config.test_carFilterByHp.values.hpValue;
+    static McLarenOption = config.test_carFilterByHp.values.McLarenOption;
 
         
     constructor() {
@@ -79,14 +78,12 @@ class ResultsPage extends BasePage {
 
     static async getResultCount(elementXPath) {
         const xpathPrefix = '::-p-xpath';
-    
         try {
             await BasePage.page.waitForSelector(`${xpathPrefix}(${elementXPath})`);
         } catch (error) {
             console.log('Element not found in page', elementXPath);
             return null;
         }
-    
         const resultCount = await ResultsPage.page.evaluate((element) => {
             const el = document.evaluate(
                 element,
@@ -121,11 +118,9 @@ class ResultsPage extends BasePage {
             await ResultsPage.selectOption(ResultsPage.carListElement,ResultsPage.McLarenOption)
             await ResultsPage.clickElement(ResultsPage.afisareRezultateBtn)
             await ResultsPage.clickElement(ResultsPage.afisare50RezultateBtn)
-            let actualFilteredResults = await ResultsPage.extractAllResultsFromAllPages()
-            let expectedResults = await ResultsPage.getResultCount(ResultsPage.totalResulstElement)
-            expect(actualFilteredResults).equal(expectedResults);
-            //expected result -> get atribute from element - 
-            //compare cu actual result > count de cate rezultate am .
+            let actualFilteredResultCount = await ResultsPage.extractAllResultsFromAllPages()
+            let expectedResultCount = await ResultsPage.getResultCount(ResultsPage.totalResulstElement)
+            expect(actualFilteredResultCount).equal(expectedResultCount);
         } 
         catch (error) {
             console.error(`Test failed: ${error.message}`);
