@@ -9,6 +9,7 @@ class ResultsPage extends BasePage {
     static afisareRezultateBtn = `//input[contains(@class, 'js-show-results')]`;
     static afisare50RezultateBtn = `//a[contains(@class, 'pagination-number') and text()='50']`;
     static resultElements = `//div[@class='g-row js-ad-entry']`;
+    static totalResulstElement = `//div[contains(@class, 'js-search-result-header')]`;
     static resultPageExpText = 'Căutare detaliată: Automobile – noi sau second-hand';
     static carListElement = 'select#makeModelVariant1Make';
     static resulstListElement = 'div.g-row.js-ad-entry';
@@ -76,13 +77,37 @@ class ResultsPage extends BasePage {
         return allResults.length;
     }
 
-    static async getResultCount() {
-        await ResultsPage.page.evaluate(element => {
-            let el = document.evaluate(element, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            if (el) el.click();
-        })
+    static async getResultCount(elementXPath) {
+        const xpathPrefix = '::-p-xpath';
+    
+        try {
+            await BasePage.page.waitForSelector(`${xpathPrefix}(${elementXPath})`);
+        } catch (error) {
+            console.log('Element not found in page', elementXPath);
+            return null;
+        }
+    
+        const resultCount = await ResultsPage.page.evaluate((element) => {
+            const el = document.evaluate(
+                element,
+                document,
+                null,
+                XPathResult.FIRST_ORDERED_NODE_TYPE,
+                null
+            ).singleNodeValue;
+    
+            if (el) {
+                return parseInt(el.getAttribute('data-result-count'), 10);
+            }
+    
+            console.log('Get result element was not found');
+            return null;
+        }, elementXPath);
+    
         return resultCount;
     }
+    
+    
     
 
     static async testCarFilterByHp(){
@@ -97,7 +122,7 @@ class ResultsPage extends BasePage {
             await ResultsPage.clickElement(ResultsPage.afisareRezultateBtn)
             await ResultsPage.clickElement(ResultsPage.afisare50RezultateBtn)
             let actualFilteredResults = await ResultsPage.extractAllResultsFromAllPages()
-            let expectedResults = await ResultsPage.getResultCount()
+            let expectedResults = await ResultsPage.getResultCount(ResultsPage.totalResulstElement)
             expect(actualFilteredResults).equal(expectedResults);
             //expected result -> get atribute from element - 
             //compare cu actual result > count de cate rezultate am .
